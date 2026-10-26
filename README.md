@@ -21,13 +21,8 @@ Screen-Knobs/
 │   ├── TestKnobJava.pde            Sketch principal (visuales)
 │   ├── Knobs.pde                   Lectura de los GPIO con Pi4J
 │   └── code/*.jar                  Pi4J 2.8.0 y SLF4J (Processing los carga solo)
-├── docs/img/                       Capturas de la carcasa usadas en este README
-└── terms_installa_pi_i_p5_fullscreen   Notas de instalación de la Raspberry (aportadas por el cliente)
+└── docs/img/                       Capturas de la carcasa usadas en este README
 ```
-
-> **Nota sobre `terms_installa_pi_i_p5_fullscreen`:** este archivo se ha modificado directamente en la Raspberry, por lo que puede diferir de la versión original del cliente.
->
-> **Importante:** en la Raspberry, en el archivo `~/.config/autostart/p5.desktop`, hay que **eliminar las líneas `Hidden=true`** que se han añadido. Se pusieron para evitar que arrancase el script de Processing y el fullscreen al iniciar la Pi; con esa línea el arranque automático queda desactivado.
 
 ---
 
@@ -37,7 +32,7 @@ Screen-Knobs/
 | Pieza | Detalle |
 |---|---|
 | Raspberry Pi 5 | Con refrigerador activo oficial. Raspberry Pi OS 64 bits (Trixie), versión *sin* aplicaciones recomendadas |
-| Pantalla | LCD HDMI 7" táctil (tipo Waveshare 7" C). Se usa girada 90° (vertical). *Pendiente de confirmar la resolución: el visor 3D indica 1024 × 600, pero arrenca.sh fuerza 800 × 480* |
+| Pantalla | LCD HDMI 7" táctil (tipo Waveshare 7" C). Se usa girada 90° (vertical). *Pendiente de confirmar la resolución: el visor 3D indica 1024 × 600* |
 | 2 × encoder | Pimoroni Picade Max Encoder: placa de 18 × 38 mm, agujeros M2,5 de 12 × 32 mm, conector JST-SH de 4 pines |
 | Cables | 2 × JST-SH 4 pines → Dupont, micro-HDMI → HDMI, USB-A → micro-USB (táctil y alimentación de la pantalla), USB-C con fuente oficial de 27 W para la Pi |
 
