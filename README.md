@@ -1,9 +1,7 @@
 # Screen-Knobs
 
 Pantalla táctil de 7" con **dos mandos giratorios** (encoder con pulsador) controlados por una **Raspberry Pi 5**.
-Los sketches de **Processing** leen los mandos y los usan para manipular los visuales de la pantalla. Se incluyen dos formas de leer los mandos (Python y Java) y el diseño de la carcasa para la Bienal (dos opciones).
-
-> Estado: pruebas de concepto. Cada sketch es un test que dibuja un círculo: el **mando 1** cambia su tamaño y el **mando 2** lo mueve en horizontal; pulsar un mando vuelve su valor a 0.
+Los sketches de **Processing** leen los mandos y los usan para manipular los visuales de la pantalla. Se incluyen dos formas de leer los mandos (Python y Java). El diseño de la carcasa es provisional, se plantean dos opciones como punto de partida.
 
 ---
 
@@ -41,7 +39,7 @@ El encoder no es I2C: aunque usa un conector JST-SH de 4 pines, no es compatible
 
 ---
 
-## Conexión de los mandos
+## Conexión de los Knobs
 
 Orden de los cables del encoder: **GND, SW, ENCA, ENCB**. Todos los pines de señal van con *pull-up* interno: el mando conecta el pin a GND.
 
@@ -69,10 +67,11 @@ Los dos programas usan exactamente estos pines (`K1: 27, 22, 17` y `K2: 19, 13, 
 
 ## Software
 
+Pruebas de concepto: cada sketch es un test que dibuja un círculo: el **knob 1** cambia su tamaño y el **knob 2** lo mueve en horizontal; pulsar un mando vuelve su valor a 0.
+
 Las dos versiones ofrecen lo mismo al sketch de Processing: `initKnobs()`, `closeKnobs()` y las variables `knobValue1` y `knobValue2`.
 
-- Se decodifica la cuadratura del encoder y se cuentan **4 pasos por clic**.
-- El valor de cada mando es un entero (positivo en un sentido, negativo en el otro).
+- El valor de cada giro del knob es un entero (positivo en sentido horario, negativo en sentido antihorario).
 - Pulsar el botón del mando devuelve su valor a **0**.
 
 El sketch de ejemplo suaviza los valores con `lerp()` y muestra FPS, memoria y los valores de los mandos en pantalla.
@@ -106,7 +105,7 @@ La versión **Java** no depende de archivos externos, solo de los `.jar` que Pro
 
 ---
 
-## Carcasa
+## Carcasa (WIP - pendiente medidas exactas)
 
 Carcasa abierta, sin caja: una plancha de metacrilato con la pantalla y los mandos por delante y la Raspberry por detrás, con su placa de prototipos (la Pi con la placa mide 27 mm de alto), y cerraduras para colgarla de la pared.
 
@@ -116,7 +115,9 @@ Hay dos opciones. En el visor aparecen como las variantes **D** (opción 1, la e
 
 ### Opción 1 — 128 × 220 × 65 mm
 
-Pantalla y mandos en una plancha frontal de metacrilato de 3 mm (128 × 208 mm). Los dos encoders van tumbados, con el conector a la derecha en los dos, y quedan a 44 mm entre centros. La Raspberry va detrás, entre la plancha frontal y una placa trasera de metacrilato de 5 mm (mismo contorno), separadas por 4 separadores hexagonales M2,5 de 35 mm. La placa trasera lleva 2 cerraduras para colgarla de la pared. Los cables HDMI y micro-USB de la pantalla llevan conectores rectos y rodean el borde superior de la plancha.
+Pantalla y mandos en una plancha frontal de metacrilato de 3 mm (128 × 208 mm). Los dos encoders van tumbados. La Raspberry va detrás, entre la plancha frontal y una placa trasera de metacrilato de 5 mm (mismo contorno), separadas por 4 separadores hexagonales M2,5 de 35 mm. La placa trasera lleva 2 cerraduras para colgarla de la pared. Los cables HDMI y micro-USB de la pantalla llevan conectores rectos y rodean el borde superior de la plancha.
+
+Valorar poner pasacables (o bridas) por detrás de la pantalla, para fijar mejor los cables HDMI y USB. 
 
 ![Opción 1, vista 3/4](docs/img/opcion1_34.png)
 
@@ -126,10 +127,11 @@ Pantalla y mandos en una plancha frontal de metacrilato de 3 mm (128 × 208 mm).
 
 ### Opción 2 — 248 × 220 × 42 mm
 
-Parte de la opción 1, pero la Raspberry va en una placa aparte, a la derecha y más abajo. La plancha de pantalla y mandos ya no necesita placa trasera: es una sola plancha de 5 mm que se cuelga con 2 cerraduras ocultas tras la pantalla, y la Pi tiene las suyas bajo su placa. Los cables de la pantalla salen por el borde superior y cruzan por el aire hasta la Pi, sin pasar por detrás de nada. La microSD y el botón de la Pi quedan libres en su borde.
+La Raspberry va en una placa aparte, a la derecha y más abajo. La plancha de pantalla y mandos ya no necesita placa trasera: es una sola plancha de 5 mm que se cuelga con 2 cerraduras ocultas tras la pantalla, y la Pi tiene las suyas bajo su placa. 
+
+Valorar: Cableado visible
 
 ![Opción 2, vista 3/4](docs/img/opcion2_34.png)
 
 ![Opción 2, trasera](docs/img/opcion2_trasera.png)
 
-> Las cotas de la pantalla y de la Raspberry son estimadas: verificar con calibre antes de cortar.
