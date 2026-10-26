@@ -1,13 +1,9 @@
 # Screen-Knobs
 
 Pantalla táctil de 7" con **dos mandos giratorios** (encoder con pulsador) controlados por una **Raspberry Pi 5**.
-Los sketches de **Processing** leen los mandos y los usan para manipular los visuales de la pantalla. Se incluyen dos formas de leer los mandos (Python y Java) y el diseño de la carcasa para la Bienal.
+Los sketches de **Processing** leen los mandos y los usan para manipular los visuales de la pantalla. Se incluyen dos formas de leer los mandos (Python y Java) y el diseño de la carcasa para la Bienal (dos opciones).
 
 > Estado: pruebas de concepto. Cada sketch es un test que dibuja un círculo: el **mando 1** cambia su tamaño y el **mando 2** lo mueve en horizontal; pulsar un mando vuelve su valor a 0.
-
-| Frente (variante A) | Detrás (variante A) |
-|---|---|
-| ![Carcasa A, vista 3/4](docs/img/A_cableado_34.png) | ![Carcasa A, vista trasera](docs/img/A_cableado_trasera.png) |
 
 ---
 
@@ -26,21 +22,27 @@ Screen-Knobs/
 │   ├── Knobs.pde                   Lectura de los GPIO con Pi4J
 │   └── code/*.jar                  Pi4J 2.8.0 y SLF4J (Processing los carga solo)
 ├── docs/img/                       Capturas de la carcasa usadas en este README
-└── terms_installa_pi_i_p5_fullscreen   Notas de instalación y arranque automático de la Raspberry
+└── terms_installa_pi_i_p5_fullscreen   Notas de instalación de la Raspberry (aportadas por el cliente)
 ```
+
+> **Nota sobre `terms_installa_pi_i_p5_fullscreen`:** este archivo se ha modificado directamente en la Raspberry, por lo que puede diferir de la versión original del cliente.
+>
+> **Importante:** en la Raspberry, en el archivo `~/.config/autostart/p5.desktop`, hay que **eliminar las líneas `Hidden=true`** que se han añadido. Se pusieron para evitar que arrancase el script de Processing y el fullscreen al iniciar la Pi; con esa línea el arranque automático queda desactivado.
 
 ---
 
+<!-- Sección oculta de momento
 ## Hardware
 
 | Pieza | Detalle |
 |---|---|
 | Raspberry Pi 5 | Con refrigerador activo oficial. Raspberry Pi OS 64 bits (Trixie), versión *sin* aplicaciones recomendadas |
-| Pantalla | LCD HDMI 7" táctil (tipo Waveshare 7" C). Se usa girada 90° (vertical). *Pendiente de confirmar la resolución: el visor 3D indica 1024 × 600, pero `arrenca.sh` fuerza 800 × 480* |
-| 2 × encoder | [Pimoroni Picade Max Encoder](https://shop.pimoroni.com/en-eu/products/picade-max-encoder?variant=55115684544891): placa de 18 × 38 mm, agujeros M2,5 de 12 × 32 mm, conector JST-SH de 4 pines |
+| Pantalla | LCD HDMI 7" táctil (tipo Waveshare 7" C). Se usa girada 90° (vertical). *Pendiente de confirmar la resolución: el visor 3D indica 1024 × 600, pero arrenca.sh fuerza 800 × 480* |
+| 2 × encoder | Pimoroni Picade Max Encoder: placa de 18 × 38 mm, agujeros M2,5 de 12 × 32 mm, conector JST-SH de 4 pines |
 | Cables | 2 × JST-SH 4 pines → Dupont, micro-HDMI → HDMI, USB-A → micro-USB (táctil y alimentación de la pantalla), USB-C con fuente oficial de 27 W para la Pi |
 
-El encoder **no es I2C**: aunque usa un conector JST-SH de 4 pines, no es compatible con Qw/ST, Qwiic ni STEMMA QT.
+El encoder no es I2C: aunque usa un conector JST-SH de 4 pines, no es compatible con Qw/ST, Qwiic ni STEMMA QT.
+-->
 
 ---
 
@@ -105,137 +107,34 @@ K2 -3
 | Archivos externos | Necesita `data/knob.py` | Solo los `.jar` de `code/` |
 | Dependencia en la Pi | `gpiozero` | Ninguna (los `.jar` van incluidos) |
 
-Como la aplicación exportada no debe depender de archivos externos (ver más abajo), la versión **Java** es la que encaja mejor. Si se usa la de Python, hay que comprobar que `knob.py` viaja dentro de la exportación.
-
----
-
-## Preparar la Raspberry Pi
-
-Resumen de las notas del archivo `terms_installa_pi_i_p5_fullscreen` (usuario `gerd`).
-
-1. **Sistema:** grabar en la tarjeta SD [Raspberry Pi OS](https://www.raspberrypi.com/software/operating-systems/) 64 bits (arm64, Trixie), versión sin aplicaciones recomendadas.
-
-2. **Processing:**
-
-   ```bash
-   sudo apt update
-   sudo apt install snapd
-   sudo reboot
-   sudo snap install snapd
-   sudo snap install processing --classic
-   ```
-
-3. **Ocultar la barra superior:** editar `/home/gerd/.config/wf-panel-pi/wf-panel-pi.ini` y añadir
-
-   ```
-   autohide=true
-   autohide_duration=500
-   ```
-
-4. **Exportar la aplicación desde Processing:**
-   - Llamar a `noCursor()`.
-   - La app **no puede depender de archivos externos**: paletas, valores, eventos y tiempos deben estar dentro del código.
-
-5. **Comprobar las pantallas conectadas:** `sudo apt-get install screen`.
-
-### Arranque automático
-
-Se crea un script `arrenca.sh` (en `/home/gerd/sketchbook/`) que espera, gira la pantalla y lanza la app exportada:
-
-```bash
-#!/bin/bash
-
-echo "LLAÇADES ENTRELLAÇADES"
-sleep 10
-
-echo "pantalla"
-wlr-randr --output HDMI-A-2 --transform 90
-sleep 3
-wlr-randr --output HDMI-A-2 --mode 800x480
-sleep 3
-
-echo "codi"
-cd /home/gerd/sketchbook/sketch_260423b_repe_vertical_LLEGEIX_mini_totdins/linux-aarch64
-sleep 3
-./sketch_260423b_repe_vertical_LLEGEIX_mini_totdins
-```
-
-Se le da permiso de ejecución y se registra en el autostart del usuario:
-
-```bash
-chmod +x arrenca.sh
-mkdir -p ~/.config/autostart/
-mousepad ~/.config/autostart/p5.desktop
-```
-
-Contenido de `p5.desktop`:
-
-```ini
-[Desktop Entry]
-Type=Application
-Exec= sh /home/gerd/sketchbook/arrenca.sh
-Name=LLACADES
-Hidden=true
-```
-
-**Esto es lo único que ha funcionado.** Probados sin éxito:
-- Añadir la línea al final de `/etc/xdg/lxsession/rpd-x/autostart`.
-- Varias formas de `/etc/rc.local`.
-- Poner el contenido del script directamente dentro del `.desktop`.
+La versión **Java** no depende de archivos externos, solo de los `.jar` que Processing incluye al exportar. Si se usa la de Python, hay que comprobar que `knob.py` viaja dentro de la exportación.
 
 ---
 
 ## Carcasa
 
-Carcasa abierta, sin caja: una plancha de metacrilato con la pantalla y los mandos por delante y la Raspberry por detrás, más un soporte para colgarla de la pared. El archivo [`CARCASA/carcasa_bienal_v2.html`](CARCASA/carcasa_bienal_v2.html) es un visor 3D interactivo: se abre en el navegador, permite girar el modelo, ver la **explosión de montaje**, ocultar la pared y los cables, simular la física de los cables y consultar la lista de piezas con medidas (al pasar el cursor por una fila se resalta la pieza).
+Carcasa abierta, sin caja: una plancha de metacrilato con la pantalla y los mandos por delante y la Raspberry por detrás, con su placa de prototipos (la Pi con la placa mide 27 mm de alto), y cerraduras para colgarla de la pared.
 
-Hay cinco variantes. Las medidas son las que da el propio visor (ancho × alto × fondo), sin cables.
+El archivo [`CARCASA/carcasa_bienal_v2.html`](CARCASA/carcasa_bienal_v2.html) es un visor 3D interactivo: se abre en el navegador, permite girar el modelo, ver la **explosión de montaje**, ocultar la pared y los cables, y consultar la lista de piezas con medidas (al pasar el cursor por una fila se resalta la pieza).
 
-### A · Cableado ordenado — 160 × 260 × 59 mm
+Hay dos opciones. En el visor aparecen como las variantes **D** (opción 1, la elegida) y **E** (opción 2). Las medidas son las que da el propio visor (ancho × alto × fondo), sin cables.
 
-Acceso lateral a la microSD y al botón de la Pi por una ventana del riel izquierdo. La plancha sube 15 mm y los cables de la pantalla pasan por ranuras con adaptadores en ángulo; un travesaño impreso en 3D une los rieles y sujeta todos los cables. Se cuelga con 2 tornillos de pared (separación de 142 mm).
+### Opción 1 — 128 × 220 × 65 mm
 
-![Variante A en 3/4](docs/img/A_cableado_34.png)
+Pantalla y mandos en una plancha frontal de metacrilato de 3 mm (128 × 208 mm). Los dos encoders van tumbados, con el conector a la derecha en los dos, y quedan a 44 mm entre centros. La Raspberry va detrás, entre la plancha frontal y una placa trasera de metacrilato de 5 mm (mismo contorno), separadas por 4 separadores hexagonales M2,5 de 35 mm. La placa trasera lleva 2 cerraduras para colgarla de la pared. Los cables HDMI y micro-USB de la pantalla llevan conectores rectos y rodean el borde superior de la plancha.
+
+![Opción 1, vista 3/4](docs/img/opcion1_34.png)
 
 | Trasera | Explosión de montaje |
 |---|---|
-| ![Variante A, trasera](docs/img/A_cableado_trasera.png) | ![Variante A, explosión](docs/img/A_cableado_explosion.png) |
+| ![Opción 1, trasera](docs/img/opcion1_trasera.png) | ![Opción 1, explosión](docs/img/opcion1_explosion.png) |
 
-### B · Compacta — 128 × 232 × 62 mm
+### Opción 2 — 248 × 220 × 42 mm
 
-Parte de A, pero sin rieles de pared ni travesaño. La plancha de 128 × 220 mm se ajusta a la pantalla y los mandos; los encoders suben y sus cables pasan por ranuras ocultas tras la pantalla. Para colgarla hay una segunda placa de metacrilato trasera, a 32 mm, con 2 cerraduras.
+Parte de la opción 1, pero la Raspberry va en una placa aparte, a la derecha y más abajo. La plancha de pantalla y mandos ya no necesita placa trasera: es una sola plancha de 5 mm que se cuelga con 2 cerraduras ocultas tras la pantalla, y la Pi tiene las suyas bajo su placa. Los cables de la pantalla salen por el borde superior y cruzan por el aire hasta la Pi, sin pasar por detrás de nada. La microSD y el botón de la Pi quedan libres en su borde.
 
-![Variante B](docs/img/B_compacta_34.png)
+![Opción 2, vista 3/4](docs/img/opcion2_34.png)
 
-### C · Dos módulos — 258 × 240 × 55 mm
+![Opción 2, trasera](docs/img/opcion2_trasera.png)
 
-Pantalla y Raspberry en una doble placa mínima de 124 × 180 mm, y los dos mandos en otra doble placa de 108 × 62 mm, unidos por sus cables. Cada módulo se cuelga con 2 tornillos de pared, así que se pueden componer libremente.
-
-![Variante C](docs/img/C_dos_modulos_34.png)
-
-### D · Mandos horizontales — 128 × 220 × 62 mm
-
-Como B, pero con las placas de los encoders tumbadas y con la misma orientación (conector a la derecha en las dos). Los mandos quedan más juntos (44 mm entre centros) y la plancha es 12 mm más baja.
-
-![Variante D](docs/img/D_mandos_horizontales_34.png)
-
-### E · Pi aparte — 248 × 220 × 39 mm
-
-Pantalla y mandos en una sola placa, y la Raspberry en otra placa aparte, a la derecha y más abajo. Las cerraduras quedan ocultas tras la pantalla y bajo la Pi, y los cables HDMI y USB van por el aire. La microSD y el botón quedan libres en el borde de la Pi.
-
-![Variante E](docs/img/E_pi_aparte_34.png)
-
-### Notas de diseño
-
-- Los cables de la pantalla (HDMI y micro-USB) sobresalen unos centímetros: en la variante A se resuelve con conectores acodados y ranuras; en el resto, con conectores rectos y cables flexibles (curvas de unos 12 mm, cables tipo "slim").
-- La placa de encoder se monta por delante de la plancha con tornillos M2,5 × 10 y tuerca; el cable JST-SH pasa a la parte trasera por una ranura de 14 × 6 mm junto a cada placa.
-- Una placa de prototipos con header hembra 2×20 sobre el GPIO lleva dos bornes de tornillo de 4 vías, uno por mando.
-- Las cotas de la pantalla y de la Raspberry son estimadas: **verificar con calibre antes de cortar**.
-
----
-
-## Pendiente
-
-- Elegir qué variante de la carcasa se fabrica y verificar las cotas con calibre.
-- Decidir si el proyecto final usa la lectura de mandos en Java o en Python.
-- Probar el arranque automático con la aplicación definitiva.
+> Las cotas de la pantalla y de la Raspberry son estimadas: verificar con calibre antes de cortar.
