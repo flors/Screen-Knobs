@@ -1,0 +1,106 @@
+***** INSTALL RASPIAN TO SD CARD
+https://www.raspberrypi.com/software/operating-systems/
+Raspberry Pi OS 64 buitsd arm64 Trixie Debian (not full, without recomended applications)
+
+***** INSTALL PROCESSING
+https://snapcraft.io/install/processing/raspbian
+
+sudo apt update
+sudo apt install snapd
+sudo reboot
+sudo snap install snapd
+sudo snap install processing --classic
+
+***** AUTO HIDE TOP BAR
+sudo mousepad /home/gerd/.config/wf-panel-pi/wf-panel-pi.ini
+
+ADD the following:
+autohide=true
+autohide_duration=500 // in miliseconds (treure el comentari al copiar al .ini)
+
+***** EXPORT L'APP DESDE PROCESSING
+noCursor();
+(les palettes han d'estar dins el codi)
+(valors, events i tempos també han d'estar dins el codi)
+(RESUM: no pot dependre de fitxers externs)
+
+***** INSTALLA SCREEN per questionar quines hi ha conectades
+sudo apt-get install screen
+
+***** CREAR EL BASH SH QUE CHEQUEJA PANTALLA I EXECUTA LA APP
+arrenca.sh
+
+#!/bin/bash
+
+echo "LLAÇADES ENTRELLAÇADES"
+sleep 10
+
+echo "pantalla"
+wlr-randr --output HDMI-A-2 --transform 90
+sleep 3
+wlr-randr --output HDMI-A-2 --mode 800x480
+sleep 3
+
+echo "codi"
+cd /home/gerd/sketchbook/sketch_260423b_repe_vertical_LLEGEIX_mini_totdins/linux-aarch64
+sleep 3
+./sketch_260423b_repe_vertical_LLEGEIX_mini_totdins
+
+***** START-UP
+xmod +x arrenca.sh
+
+mkdir -p .config/autostart/
+sudo mousepad .config/autostart/p5.desktop
+copiar a dins
+[Desktop Entry]
+Type=Application
+Exec= sh /home/gerd/sketchbook/arrenca.sh
+Name=LLACADES 
+Hidden=true
+(FUNCIONAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA això de dalt)
+
+
+(NO HA FUNCIONAT res de lo de sota)
+sudo mousepad /etc/xdg/lxsession/rpd-x/autostart
+afegir al final del fitxer
+@/home/gerd/sketchbook/arrenca.sh
+NO HA FUNCIONAT
+
+NO HA FUNCIONAT
+sudo mousepad /etc/rc.local
+afegir al final del fitxer
+/home/gerd/sketchbook/arrenca.sh
+exit 0
+NO HA FUNCIONAT
+
+NO HA FUNCIONAT
+sudo mousepad /etc/rc.local
+afegir al fitxer
+sh /home/gerd/sketchbook/arrenca.sh
+exit 0
+NO HA FUNCIONAT
+
+NO HA FUNCIONAT
+sudo mousepad /etc/rc.local
+afegir al fitxer
+#!/bin/sh
+/home/gerd/sketchbook/arrenca.sh
+exit 0
+NO HA FUNCIONAT
+
+NO HA FUNCIONAT
+mkdir -p .config/autostart/
+sudo mousepad .config/autostart/p5.desktop
+copiar lo del bash a dins
+NO HA FUNCIONAT
+
+FUNCIONAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+mkdir -p .config/autostart/
+sudo mousepad .config/autostart/p5.desktop
+copiar a dins
+[Desktop Entry]
+Type=Application
+Exec= sh /home/gerd/sketchbook/arrenca.sh
+Name=LLACADES 
+Hidden=true
+FUNCIONAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
