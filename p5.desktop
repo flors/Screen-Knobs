@@ -1,0 +1,4 @@
+[Desktop Entry]
+Type=Application
+Exec= sh /home/gerd/sketchbook/arrenca.sh
+Name=LLACADES 

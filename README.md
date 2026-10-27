@@ -1,7 +1,7 @@
 # Screen-Knobs
 
 Pantalla táctil de 7" con **dos mandos giratorios** (encoder con pulsador) controlados por una **Raspberry Pi 5**.
-Los sketches de **Processing** leen los mandos y los usan para manipular los visuales de la pantalla. Se incluyen dos formas de leer los mandos (Python y Java). El diseño de la carcasa es provisional, se plantean dos opciones como punto de partida.
+Los sketches de **Processing** leen los mandos y los usan para manipular los visuales de la pantalla. Se incluyen dos formas de leer los mandos (Python y Java). El diseño de la carcasa es provisional.
 
 ---
 
@@ -111,7 +111,7 @@ Carcasa abierta, sin caja: una plancha de metacrilato con la pantalla y los mand
 
 El archivo [`CARCASA/carcasa_bienal_v2.html`](CARCASA/carcasa_bienal_v2.html) es un visor 3D interactivo: se abre en el navegador, permite girar el modelo, ver la **explosión de montaje**, ocultar la pared y los cables, y consultar la lista de piezas con medidas (al pasar el cursor por una fila se resalta la pieza).
 
-Hay dos opciones. En el visor aparecen como las variantes **D** (opción 1, la elegida) y **E** (opción 2). Las medidas son las que da el propio visor (ancho × alto × fondo), sin cables.
+La opción elegida aparece en el visor como la variante **D**. Las medidas son las que da el propio visor (ancho × alto × fondo), sin cables.
 
 ### Opción 1 — 128 × 220 × 65 mm
 
@@ -125,6 +125,7 @@ Valorar poner pasacables (o bridas) por detrás de la pantalla, para fijar mejor
 |---|---|
 | ![Opción 1, trasera](docs/img/opcion1_trasera.png) | ![Opción 1, explosión](docs/img/opcion1_explosion.png) |
 
+<!-- Opción 2 oculta de momento
 ### Opción 2 — 248 × 220 × 42 mm
 
 La Raspberry va en una placa aparte, a la derecha y más abajo. La plancha de pantalla y mandos ya no necesita placa trasera: es una sola plancha de 5 mm que se cuelga con 2 cerraduras ocultas tras la pantalla, y la Pi tiene las suyas bajo su placa. 
@@ -134,4 +135,4 @@ Valorar: Cableado visible
 ![Opción 2, vista 3/4](docs/img/opcion2_34.png)
 
 ![Opción 2, trasera](docs/img/opcion2_trasera.png)
-
+-->
