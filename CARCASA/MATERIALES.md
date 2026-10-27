@@ -2,7 +2,7 @@
 
 Opción 1 (variante **D** del visor [`carcasa_bienal_v2.html`](carcasa_bienal_v2.html)). Medidas totales del conjunto: **128 × 220 × 65 mm** (ancho × alto × fondo), sin cables. Todas las cotas salen del modelo 3D.
 
-> Las cotas de la pantalla, la Raspberry y la placa de prototipos son **estimadas**: verificar con calibre antes de cortar y de comprar la tornillería.
+> ⚠️ **WARNING: PENDIENTE CONFIRMAR MEDIDAS REALES.** Las cotas de la pantalla, la Raspberry y la placa de prototipos son **estimadas**. No cortar las planchas ni comprar la tornillería hasta verificarlas con calibre.
 
 ## Planchas de metacrilato (corte láser)
 
