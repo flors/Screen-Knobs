@@ -61,6 +61,10 @@ Orden de los cables del encoder: **GND, SW, ENCA, ENCB**. Todos los pines de se�
 | ENCA | 35 | 19 |
 | ENCB | 33 | 13 |
 
+**Esquema de conexión** (Raspberry Pi 5 vista desde arriba, con los puertos USB/Ethernet hacia abajo y la cabecera GPIO en el borde derecho):
+
+![Esquema GPIO: conexión de los knobs](docs/img/gpio_knobs.svg)
+
 Los dos programas usan exactamente estos pines (`K1: 27, 22, 17` y `K2: 19, 13, 26`, en el orden ENCA, ENCB, SW). Si un mando gira al revés, intercambia sus pines A y B en el código.
 
 ---
