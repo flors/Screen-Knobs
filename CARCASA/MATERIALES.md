@@ -31,7 +31,7 @@ Metacrilato transparente. Los archivos de corte están en [`svg/`](svg/).
 | 1 | Cable micro-HDMI → HDMI | Hacia una 2ª pantalla (en el modelo solo se reserva el espacio) |
 | 1 | Cable USB-C y fuente oficial de 27 W (5 V / 5 A) | Alimentación de la Raspberry Pi 5 |
 | 2 | Cable JST-SH 4 pines → Dupont | Uno por mando: GND, SW, ENCA, ENCB |
-| 1 | Pasacables adhesivo redondo (Ø13, tipo clip de silicona) | Se pega en la cara interior de la placa trasera y sujeta el cable de alimentación. Se pueden añadir más donde haga falta |
+| ? | Pasacables adhesivo redondo (Ø13? tipo clip de silicona) | Se pega en la cara interior de la placa trasera y sujeta el cable de alimentación. Se pueden añadir más donde haga falta |
 
 Los cables de la pantalla salen por encima del borde superior de la plancha, con una curva amplia.
 
@@ -55,7 +55,9 @@ Los cables de la pantalla salen por encima del borde superior de la plancha, con
 | 4 | Tornillo M2,5 × 8, avellanado | Placa trasera, por detrás y a ras |
 
 ## Fijación a la pared
+**DEPENDE DE MONTAJE EN SALA** 
 
+Recomendación:
 | Cant. | Pieza | Notas |
 |---|---|---|
 | 2 | Tornillo de pared de cabeza ancha (Ø8), M4 × 40 | Separación entre tornillos: 80 mm. Dejar unos 9 mm fuera de la pared |
@@ -63,11 +65,12 @@ Los cables de la pantalla salen por encima del borde superior de la plancha, con
 
 Se cuelga por el agujero grande de cada cerradura y se desliza hacia abajo. El hueco de 35 mm entre pared y plancha aloja la Raspberry y los cables.
 
-## Conexión de los mandos al GPIO
+## Conexión de los knobs al GPIO
+En caso de usar la placa con los pines soldados. 
+Orden de los cables de cada knob: GND, SW, ENCA, ENCB, en la fila interior del header. Cada knb va a un borne de la placa de prototipos.
 
-Orden de los cables de cada mando: GND, SW, ENCA, ENCB, en la fila interior del header. Cada mando va a un borne de la placa de prototipos.
-
-| Mando | Pines físicos | Señales |
+| Knob | Pines físicos | Señales |
 |---|---|---|
-| Mando 1 | 9 · 11 · 13 · 15 | GND · GPIO17 · GPIO27 · GPIO22 |
-| Mando 2 | 39 · 37 · 35 · 33 | GND · GPIO26 · GPIO19 · GPIO13 |
+| Knob 1 (Izquierda)| 39 · 37 · 35 · 33 | GND · GPIO26 · GPIO19 · GPIO13 |
+| Knob 2 (Derecha) | 9 · 11 · 13 · 15 | GND · GPIO17 · GPIO27 · GPIO22 |
+
