@@ -5,6 +5,26 @@ Los sketches de **Processing** leen los mandos y los usan para manipular los vis
 
 ---
 
+## Funcionamiento del autostart
+
+Al iniciar sesión en la Raspberry, el archivo `~/.config/autostart/p5.desktop` lanza el script `arrenca.sh`, que prepara las pantallas y abre los sketches.
+
+**Desactivar:**
+
+```
+mv ~/.config/autostart/p5.desktop ~/.config/autostart/p5.desktop.disabled
+```
+
+**Volver a activarlo:**
+
+```
+mv ~/.config/autostart/p5.desktop.disabled ~/.config/autostart/p5.desktop
+```
+
+El cambio se aplica en el siguiente arranque.
+
+---
+
 ## Contenido del repositorio
 
 ```
@@ -104,8 +124,18 @@ K2 -3
 | Proceso extra | Sí (`python3`) | No, todo dentro de Processing |
 | Archivos externos | Necesita `data/knob.py` | Solo los `.jar` de `code/` |
 | Dependencia en la Pi | `gpiozero` | Ninguna (los `.jar` van incluidos) |
+| Estrategia | Event-driven: callbacks de `gpiozero` (`when_activated`, `when_deactivated`) | Polling: un loop lee el estado de los pines |
+| Threads | Varios, threads internos de la librería | Un único thread (`lectura-knobs`) para los dos knobs |
+| Sincronización | `Lock` global en `knob.py` | No hace falta: todo ocurre en el mismo thread |
+| Riesgo | El orden de los eventos entre knobs no está garantizado | Perder pulsos más cortos que el periodo de lectura (0,5 ms) |
 
 La versión **Java** no depende de archivos externos, solo de los `.jar` que Processing incluye al exportar. Si se usa la de Python, hay que comprobar que `knob.py` viaja dentro de la exportación.
+
+#### Si los dos knobs se mueven a la vez
+
+- **Python:** los callbacks pueden ejecutarse en paralelo, desde threads distintos de la librería. Un `Lock` global serializa la actualización del contador y el `print` de cada línea (`K1 5`, `K2 -3`): cada knob cuenta bien y las líneas no se mezclan, aunque el orden entre knobs no está garantizado. En Processing, un thread lee el stdout de `knob.py` línea a línea y actualiza `knobValue1` y `knobValue2`.
+- **Java:** no usa listeners. Un único thread llama a `knob1.leer(); knob2.leer();` cada 0,5 ms, siempre en ese orden. Si los dos knobs cambian a la vez, cada cambio se detecta en la siguiente vuelta del loop, sin concurrencia entre knobs.
+- En las dos versiones, `knobValue1` y `knobValue2` son `volatile int`: el thread de `draw()` siempre ve el último valor.
 
 ---
 
