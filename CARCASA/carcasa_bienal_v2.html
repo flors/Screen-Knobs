@@ -69,7 +69,7 @@ table{border-collapse:collapse;width:100%;margin-top:6px;font-size:12px}td{paddi
 <tr data-parts="cables" class="cc"><td>HDMI</td><td>Cable micro-HDMI → HDMI para la pantalla. Valorar un cable más flexible (tipo "slim") o un HDMI en L / adaptador acodado en el extremo de la pantalla, con la salida hacia la plancha</td></tr>
 <tr data-parts="backPlate" class="bp"><td>1×</td><td id="bomBP">Placa trasera de metacrilato 5 mm, 128×220 (mismo contorno que la frontal). Corte láser: 4 Ø2,8 (en los mismos puntos que los de la pantalla) y 2 cerraduras (agujero Ø9 + ranura 4,5×10, separación 80 mm) para colgar</td></tr>
 <tr data-parts="bpStand" class="bp"><td>4×</td><td id="bomBS">Separador M2,5 hexagonal H-H de {D} mm entre las dos placas, justo detrás de cada separador de la pantalla (deja {M} mm de margen a los bornes)</td></tr>
-<tr data-parts="bpScrews" class="bp"><td>4×</td><td>Tornillo M2,5×8 avellanado por detrás de la placa trasera, a ras</td></tr>
+<tr data-parts="bpScrews" class="bp"><td>4×</td><td id="bomBPS">Tornillo M2,5×8 avellanado por detrás de la placa trasera, a ras</td></tr>
 <tr data-parts="kFront" class="km"><td>C · 1×</td><td>Placa frontal de mandos, metacrilato 3 mm, 108×62. Corte láser: 8 Ø2,8 (encoders), 4 Ø2,8 (separadores) y 2 ranuras 14×6 para los cables</td></tr>
 <tr data-parts="kBack" class="km"><td>C · 1×</td><td>Placa trasera de mandos, metacrilato 5 mm, 108×62. Corte láser: 4 Ø2,8 y 2 cerraduras (agujero Ø9 + ranura 4,5×10, separación 72 mm) para colgar</td></tr>
 <tr data-parts="kStand" class="km"><td>C · 4×</td><td>Separador M2,5 hexagonal H-H de 8 mm entre las dos placas de mandos (deja sitio a las tuercas, a los cables y a la cabeza del tornillo de pared)</td></tr>
@@ -1225,8 +1225,8 @@ table{border-collapse:collapse;width:100%;margin-top:6px;font-size:12px}td{paddi
     const c1 = box(o.hd * 0.6, 0.45, 0.1, mat.dark, x, y, face, p), c2 = box(0.45, o.hd * 0.6, 0.1, mat.dark, x, y, face, p);
     c1.castShadow = c2.castShadow = false;
   }
-  function nut(p, x, y, zs, out, h) { h = h || 2; cylZ(2.9, 2.9, h, mat.steel, x, y, zs + out * h / 2, p, 6); }
-  function standoff(p, x, y, z0, z1, m) { cylZ(2.9, 2.9, Math.abs(z1 - z0), m || mat.brass, x, y, (z0 + z1) / 2, p, 6); }
+  function nut(p, x, y, zs, out, h, r) { h = h || 2; r = r || 2.9; cylZ(r, r, h, mat.steel, x, y, zs + out * h / 2, p, 6); }
+  function standoff(p, x, y, z0, z1, m, r) { r = r || 2.9; cylZ(r, r, Math.abs(z1 - z0), m || mat.brass, x, y, (z0 + z1) / 2, p, 6); }
 
   function rr(s, x, y, w, h, r) {
     s.moveTo(x + r, y); s.lineTo(x + w - r, y); s.absarc(x + w - r, y + r, r, -Math.PI / 2, 0, false);
@@ -1284,7 +1284,7 @@ table{border-collapse:collapse;width:100%;margin-top:6px;font-size:12px}td{paddi
   const plateShape = new THREE.Shape();
   rr(plateShape, -W / 2, PY - H / 2, W, H, cfg.radius);
   const addHole = (x, y, r) => { const h = new THREE.Path(); h.absarc(x, y, r, 0, Math.PI * 2, true); plateShape.holes.push(h); };
-  ['screen'].concat(cfg.split ? [] : ['pi']).concat(cfg.kmod ? [] : ['knobL', 'knobR']).forEach((k) => holes[k].forEach((h) => addHole(h[0], h[1], 1.4)));
+  ['screen'].concat(cfg.split ? [] : ['pi']).concat(cfg.kmod ? [] : ['knobL', 'knobR']).forEach((k) => holes[k].forEach((h) => addHole(h[0], h[1], cfg.m3 && k === 'screen' ? 1.6 : 1.4)));
   holes.rail.forEach((h) => addHole(h[0], h[1], 2.2));
   if (cfg.split) [-40, 40].forEach((x) => {   // cerraduras en la propia placa, tapadas por la pantalla
     const r1 = 4.5, r2 = 2.25, h0 = Math.atan2(Math.sqrt(r1 * r1 - r2 * r2), r2), k = new THREE.Path();
@@ -1316,7 +1316,7 @@ table{border-collapse:collapse;width:100%;margin-top:6px;font-size:12px}td{paddi
     box(100, 165, 1.6, mat.blue, 0, y0, 10.8, g);
     [[-1, 1], [1, 1], [-1, -1], [1, -1]].forEach(([sx, sy]) => {
       box(9, 11, 1.6, mat.blue, sx * (SCR_HX + 0.5), y0 + sy * SCR_HY, 10.8, g);
-      screw(g2, sx * SCR_HX, y0 + sy * SCR_HY, 11.6, -1, { len: cfg.backPlate ? 18 - (5 - T) : (SO_SCR > 7 ? 8 : 5), hd: 5, hh: 1.5 });
+      screw(g2, sx * SCR_HX, y0 + sy * SCR_HY, 11.6, -1, { len: cfg.m3 ? SO_SCR + 1.6 + T + 5.4 : (cfg.backPlate ? 18 - (5 - T) : (SO_SCR > 7 ? 8 : 5)), d: cfg.m3 ? 3 : 2.5, hd: cfg.m3 ? 5.5 : 5, hh: 1.5 });
     });
     box(100, 165, 3, mat.dark, 0, y0, 13.1, g);
     box(98, 163, 3, mat.black, 0, y0, 16.1, g);
@@ -1344,7 +1344,7 @@ table{border-collapse:collapse;width:100%;margin-top:6px;font-size:12px}td{paddi
 
   // separadores pantalla + tornillos traseros
   holes.screen.forEach(([x, y]) => {
-    standoff(G.stand, x, y, 0, SO_SCR);
+    standoff(G.stand, x, y, 0, SO_SCR, null, cfg.m3 ? 3.2 : 2.9);
     if (!cfg.backPlate) screw(G.screenBackScrews, x, y, -T, +1, { len: 8, hd: 5, hh: 1.6 });
   });
 
@@ -1446,7 +1446,10 @@ table{border-collapse:collapse;width:100%;margin-top:6px;font-size:12px}td{paddi
   })();
   if (!cfg.split) holes.pi.forEach(([x, y]) => {
     standoff(G.piStand, x, y, -T, PIZ);
-    screw(G.piFront, x, y, 0, -1, { len: 8 - (5 - T), hd: 4.6, hh: 1.4, csk: true });
+    if (cfg.piMF) {   // separador M-H: rosca macho de 6 mm a través de la plancha + tuerca por delante (los tornillos no chocan dentro del separador)
+      cylZ(1.25, 1.25, 6, mat.steel, x, y, -T + 3, G.piStand, 12);
+      nut(G.piFront, x, y, 0, +1);
+    } else screw(G.piFront, x, y, 0, -1, { len: 8 - (5 - T), hd: 4.6, hh: 1.4, csk: true });
     screw(G.piScrews, x, y, PIZ - 1.6, +1, { len: 4, hd: 5, hh: 1.6 });
   });
 
@@ -1529,7 +1532,7 @@ table{border-collapse:collapse;width:100%;margin-top:6px;font-size:12px}td{paddi
   if (cfg.backPlate) {
     // Placa trasera de metacrilato (igual contorno que la frontal) con 4 agujeros para los separadores y 2 cerraduras para colgar
     const bps = new THREE.Shape(); rr(bps, -W / 2, PY - H / 2, W, H, cfg.radius);
-    BP_HOLES.forEach(([x, y]) => { const h = new THREE.Path(); h.absarc(x, y, 1.4, 0, Math.PI * 2, true); bps.holes.push(h); });
+    BP_HOLES.forEach(([x, y]) => { const h = new THREE.Path(); h.absarc(x, y, cfg.m3 ? 1.6 : 1.4, 0, Math.PI * 2, true); bps.holes.push(h); });
     const KX = 40, KY = 88, KS = 98, r1 = 4.5, r2 = 2.25, h0 = Math.atan2(Math.sqrt(r1 * r1 - r2 * r2), r2);
     [-KX, KX].forEach((x) => {
       const k = new THREE.Path();
@@ -1540,12 +1543,12 @@ table{border-collapse:collapse;width:100%;margin-top:6px;font-size:12px}td{paddi
     const bpm = mesh(bpg, plateMats[cfg.plate], 0, 0, 0, G.backPlate); bpm.castShadow = false; bpm.renderOrder = 2;
     G.backPlate.add(new THREE.LineSegments(new THREE.EdgesGeometry(bpg, 8), new THREE.LineBasicMaterial({ color: edgeCol })));
     BP_HOLES.forEach(([x, y]) => {
-      standoff(G.bpStand, x, y, -T, BP_Z0);
-      cylZ(1.25, 1.25, 8, mat.steel, x, y, BP_Z1 + 4, G.bpScrews, 12);                  // tornillo M2,5×8 avellanado por detrás, a ras
-      cylZ(1.25, 2.5, 1.5, mat.steel, x, y, BP_Z1 + 0.75, G.bpScrews, 20);
+      standoff(G.bpStand, x, y, -T, BP_Z0, null, cfg.m3 ? 3.2 : 2.9);
+      cylZ(cfg.m3 ? 1.5 : 1.25, cfg.m3 ? 1.5 : 1.25, 8, mat.steel, x, y, BP_Z1 + 4, G.bpScrews, 12);                  // tornillo M2,5/M3 × 8 avellanado por detrás, a ras
+      cylZ(cfg.m3 ? 1.5 : 1.25, cfg.m3 ? 3 : 2.5, cfg.m3 ? 1.8 : 1.5, mat.steel, x, y, BP_Z1 + (cfg.m3 ? 0.9 : 0.75), G.bpScrews, 20);
       box(3, 0.45, 0.1, mat.dark, x, y, BP_Z1 - 0.04, G.bpScrews).castShadow = false; box(0.45, 3, 0.1, mat.dark, x, y, BP_Z1 - 0.04, G.bpScrews).castShadow = false;
     });
-    if (!cfg.split) {
+    if (!cfg.split && !cfg.noClip) {
     // pasacables adhesivo redondo (ejemplo), pegado en la cara interior de la placa trasera
     const clipM = S(0x2a2a2e, { roughness: 0.85 });
     cylZ(7, 7, 0.8, S(0xe8e2cf, { roughness: 0.9 }), CLIP_X, CLIP_Y, BP_Z0 + 0.4, G.clip, 28);       // base adhesiva
@@ -1763,7 +1766,7 @@ table{border-collapse:collapse;width:100%;margin-top:6px;font-size:12px}td{paddi
     ['Pantalla 7"', [0, 90, 18], 'screen'], ['Mando extraíble', [-KNOB_X + KOFF[0], KNOB_Y + 14 + KOFF[1], 14 + KOFF[2]], 'knobCaps'], ['Placa encoder (delante)', [KNOB_X + KOFF[0], KNOB_Y - 14 + KOFF[1], 1.6 + KOFF[2]], 'knobs'], ...(cfg.kmod ? [['Módulo de mandos', [KOFF[0], KOFF[1] + 36, KMZ], 'kFront'], ['Placa trasera de mandos', [KOFF[0] - 40, KOFF[1] - 24, KMZ - 15], 'kBack']] : []), ['HDMI → 2ª pantalla', [18, 160, -34], 'cables'], [cfg.side ? 'Acceso lateral microSD y botón' : 'Acceso microSD y botón', cfg.rails === 'none' ? [PI_CX - 50, PI_CY + 26, -20] : cfg.side ? [-71, 25, -20] : [-54, PI_CY + 30, -20], 'access'],
     ['Metacrilato 5 mm', cfg.plateBox ? [-48, cfg.plateBox.bottom + 6, 0] : [-62, -108, 0], 'plate'], ['Raspberry Pi 5', [PI_CX, PI_CY + 5, -30], 'pi'], ['Botón de encendido', [PI_CX - 41, PI_CY + 6, -16], 'pi'], ['microSD (cara inferior)', [PI_CX - 45, PI_CY, -12], 'pi'], ['Alimentación USB-C 5 V / 5 A', [PI_CX - 31.3, PI_CY + 50, -17], 'cables'], ['→ a fuente 27 W', [-46, 205, -34.5], 'cables'],
     [cfg.rails === 'blocks' ? 'Tacos de pared' : 'Riel de pared', [RAIL_X, cfg.rails === 'blocks' ? -85 : -70, -21], 'rails'], ['Separadores M2.5 10 mm', [SCR_HX, SCR_Y + SCR_HY, 10], 'stand'],
-    ['Cable HDMI', [-17, 100, -17.5], 'cables'], ...(cfg.frame ? [['Marco frontal (impreso 3D)', [-71, 20, 2.65], 'frame']] : []), ...(cfg.cableBar && !cfg.straight ? [['Ranuras de cable', [0, 140, 0], 'plate']] : []), ...(cfg.cableBar && !cfg.noBar ? [['Travesaño con pasacables', [0, 106, -20], 'bar']] : []), ...(cfg.backPlate ? [['Placa trasera', [-45, -60, -39.5], 'backPlate'], ['Separadores M2,5 de ' + RAIL_D + ' mm (coaxiales con los de la pantalla)', [54, -41, -20], 'bpStand'], ['Pasacables adhesivo (ejemplo)', [CLIP_X, CLIP_Y, BP_Z0 + 8], 'backPlate'], ['Cerradura para colgar', [-40, 88, -39.5], 'backPlate']] : []), ['Placa de bornes (sobre GPIO)', [PI_CX - 10, -26, -36], 'pi'], ['Pared', [150, 110, WALL_Z], 'wall'],
+    ['Cable HDMI', [-17, 100, -17.5], 'cables'], ...(cfg.frame ? [['Marco frontal (impreso 3D)', [-71, 20, 2.65], 'frame']] : []), ...(cfg.cableBar && !cfg.straight ? [['Ranuras de cable', [0, 140, 0], 'plate']] : []), ...(cfg.cableBar && !cfg.noBar ? [['Travesaño con pasacables', [0, 106, -20], 'bar']] : []), ...(cfg.backPlate ? [['Placa trasera', [-45, -60, -39.5], 'backPlate'], ['Separadores ' + (cfg.m3 ? 'M3' : 'M2,5') + ' de ' + RAIL_D + ' mm (coaxiales con los de la pantalla)', [54, -41, -20], 'bpStand'], ...(cfg.noClip ? [] : [['Pasacables adhesivo (ejemplo)', [CLIP_X, CLIP_Y, BP_Z0 + 8], 'backPlate']]), ['Cerradura para colgar', [-40, 88, -39.5], 'backPlate']] : []), ['Placa de bornes (sobre GPIO)', [PI_CX - 10, -26, -36], 'pi'], ['Pared', [150, 110, WALL_Z], 'wall'],
   ];
   const labelsEl = document.getElementById('labels'); labelsEl.innerHTML = '';
   const splitLabels = cfg.split ? [['Pantalla 7" + mandos', [0, 90, 18], 'screen'], ['Placa de pantalla (con cerraduras ocultas)', [-52, -70, 0], 'plate'],
@@ -1795,10 +1798,10 @@ table{border-collapse:collapse;width:100%;margin-top:6px;font-size:12px}td{paddi
   camera.position.set(...views.persp);
 
   const VARIANTS = [
-    { id: 'D', chosen: true, name: 'Mandos horizontales', bpBom: 'Placa trasera de metacrilato 5 mm, 128×208 (mismo contorno que la frontal). Corte láser: 4 Ø2,8 (en los mismos puntos que los de la pantalla) y 2 cerraduras (agujero Ø9 + ranura 4,5×10, separación 80 mm) para colgar', desc: 'Igual que B, pero con las placas de los encoders en horizontal y con la misma orientación (conector a la derecha en las dos). Plancha de 128×208 mm.', plate: 'clear', radius: 8, rails: 'none', rail: 0x26272b, knob: 0x1d1d21, side: true, piX: -6, cableBar: true, noBar: true, plateBox: { w: 128, top: 130, bottom: -78 }, straight: true, backPlate: true, tFront: 3, tBack: 5, psBom: 'Tornillo M2,5×6 avellanado (Pi, desde delante, a ras)', ksBom: 'Tornillo M2,5×8 + tuerca M2,5 (encoders, atornillados por delante)', ssBom: 'Tornillo M2,5×16 (pantalla: atraviesa el separador de 7 mm y la plancha y entra en el separador largo de {D} mm)', knobY: -60, knobX: 22, kHoriz: true, slotDy: 23.5,
-      plateBom: 'Plancha frontal metacrilato 3 mm, 128×208, esquinas R8. Corte láser: 16 Ø2,8 (M2,5), 2 ranuras 7×8 para los cables de los encoders (ocultas tras la pantalla)',
+    { id: 'D', chosen: true, name: 'Mandos horizontales', bpBom: 'Placa trasera de metacrilato 3 mm, 128×208 (mismo contorno que la frontal). Corte láser: 4 Ø3,2 (M3, en los mismos puntos que los de la pantalla) y 2 cerraduras (agujero Ø9 + ranura 4,5×10, separación 80 mm) para colgar', desc: 'Igual que B, pero con las placas de los encoders en horizontal y con la misma orientación (conector a la derecha en las dos). Plancha de 128×208 mm.', plate: 'clear', radius: 8, rails: 'none', rail: 0x26272b, knob: 0x1d1d21, side: true, piX: -6, cableBar: true, noBar: true, plateBox: { w: 128, top: 130, bottom: -78 }, straight: true, backPlate: true, tFront: 3, tBack: 3, soScr: 10, m3: true, piMF: true, noClip: true, soBom: 'Separador latón M3 hembra-hembra de 10 mm (pantalla)', pstBom: 'Separador M2,5 macho-hembra de 6 mm, con rosca macho de 6 mm (Raspberry; deberían venir con su kit)', pscBom: 'Tornillo M2,5×4 (Raspberry, por la cara de la Pi, en la rosca hembra del separador)', psBom: 'Tuerca M2,5 (Raspberry, en la rosca macho del separador, por delante de la plancha; queda tapada por la pantalla)', ksBom: 'Tornillo M2,5×8 + tuerca M2,5 (encoders, atornillados por delante)', ssBom: 'Tornillo M3×20 (pantalla: atraviesa el separador de 10 mm y la plancha y entra en el separador largo de {D} mm)', bsBom: 'Separador M3 hexagonal H-H de {D} mm entre las dos placas, justo detrás de cada separador de la pantalla (deja {M} mm de margen a los bornes)', bpsBom: 'Tornillo M3×8 avellanado por detrás de la placa trasera, a ras (el avellanado se hace a mano; o un tornillo normal que sobresalga)', knobY: -60, knobX: 22, kHoriz: true, slotDy: 23.5,
+      plateBom: 'Plancha frontal metacrilato 3 mm, 128×208, esquinas R8. Corte láser: 4 Ø3,2 (M3: pantalla), 12 Ø2,8 (M2,5: encoders y Raspberry) y 2 ranuras 7×8 para los cables de los encoders (ocultas tras la pantalla)',
       bom: 'Placa trasera de metacrilato con 2 cerraduras para colgar; sin rieles ni travesaño',
-      note: 'Mandos horizontales: igual que B, pero las placas de los encoders (38×18) van tumbadas, ambas con el conector a la derecha, así que giran y se leen igual. Los mandos quedan más juntos (44 mm entre centros) y la plancha es 12 mm más baja. Compacta: la plancha apenas rebasa la pantalla y los mandos. Los encoders suben hasta pegarse a la pantalla, de modo que las ranuras de sus cables quedan tapadas por ella. Los cables HDMI y USB de la pantalla llevan conectores rectos y rodean el borde superior de la plancha (curva amplia, cables flexibles). Para colgarlo hay una segunda placa de metacrilato (5 mm; la frontal es de 3 mm) idéntica en contorno, a {D} mm (lo mínimo para la Pi con su placa de 27 mm), unida con 4 separadores M2,5 coaxiales con los de la pantalla (un solo tornillo largo por esquina) y con 2 cerraduras. La Pi está desplazada 14 mm hacia el centro para que sus tornillos queden tapados por la pantalla; el lateral izquierdo sigue abierto entre placas (zona verde) para la microSD y el botón, aunque ya no a ras.' },
+      note: 'Mandos horizontales: igual que B, pero las placas de los encoders (38×18) van tumbadas, ambas con el conector a la derecha, así que giran y se leen igual. Los mandos quedan más juntos (44 mm entre centros) y la plancha es 12 mm más baja. Compacta: la plancha apenas rebasa la pantalla y los mandos. Los encoders suben hasta pegarse a la pantalla, de modo que las ranuras de sus cables quedan tapadas por ella. Los cables HDMI y USB de la pantalla llevan conectores rectos y rodean el borde superior de la plancha (curva amplia, cables flexibles). Para colgarlo hay una segunda placa de metacrilato, también de 3 mm, idéntica en contorno, a {D} mm (lo mínimo para la Pi con su placa de 27 mm), unida con 4 separadores M3 coaxiales con los de la pantalla (un solo tornillo largo por esquina) y con 2 cerraduras. Los separadores de la Raspberry son macho-hembra: la rosca macho atraviesa la plancha y se fija con una tuerca por delante, y la Pi se atornilla en la rosca hembra, así que los tornillos no chocan. Las tuercas quedan tapadas por la pantalla, que va a 10 mm de la plancha. El lateral izquierdo sigue abierto entre placas (zona verde) para la microSD y el botón, aunque ya no a ras.' },
     { id: 'A', name: 'Cableado ordenado', desc: 'Acceso lateral a microSD y botón por una ventana del riel izquierdo. La plancha sube 15 mm y los cables a la pantalla pasan por ranuras con adaptadores en ángulo; un travesaño impreso une los rieles y sujeta todos los cables.', plate: 'clear', radius: 8, rails: 'gap', rail: 0x26272b, knob: 0x1d1d21, side: true, piX: -20, cableBar: true, plateExt: 15,
       plateBom: 'Plancha metacrilato 5 mm, 156×260, esquinas R8. Corte láser: 16 Ø2,8 (M2,5), 4 Ø4,4 (M4), 2 ranuras 14×6 para los cables de los encoders, 2 ranuras de cable 22×12 y 16×10 (pasa el conector acodado)',
       bom: '2× Riel de pared 14×215×{D}, impreso 3D (PETG). El izquierdo lleva una ventana de 36 mm hacia la plancha, unida por una banda de 10 mm junto a la pared; 2 inserts M4 por riel + ranura de colgado trasera',
@@ -1846,7 +1849,7 @@ table{border-collapse:collapse;width:100%;margin-top:6px;font-size:12px}td{paddi
     document.getElementById('bomKS').textContent = vr.ksBom || 'Tornillo M2,5×10 + tuerca M2,5 (encoders, atornillados por delante)';
     (function () { const e = document.getElementById('bomBP'); if (!e.dataset.d) e.dataset.d = e.textContent; e.textContent = vr.bpBom || e.dataset.d; })();
     (function () { const e = document.getElementById('bomEnc'); if (!e.dataset.d) e.dataset.d = e.textContent; e.textContent = vr.kHoriz ? 'Encoder Pimoroni Picade Max, 38×18, agujeros 32×12 (M2,5). Se montan en el frente, tumbados y con la misma orientación (conector a la derecha en los dos); cables por una ranura de 7×8 tras la pantalla' : e.dataset.d; })();
-    (function () { [['bomPSt', 'pstBom'], ['bomPSc', 'pscBom'], ['bomBS', 'bsBom']].forEach(([id, k]) => { const e = document.getElementById(id); if (!e.dataset.d) e.dataset.d = e.textContent; e.textContent = fillD(vr[k] || e.dataset.d); }); })();
+    (function () { [['bomPSt', 'pstBom'], ['bomPSc', 'pscBom'], ['bomBS', 'bsBom'], ['bomBPS', 'bpsBom']].forEach(([id, k]) => { const e = document.getElementById(id); if (!e.dataset.d) e.dataset.d = e.textContent; e.textContent = fillD(vr[k] || e.dataset.d); }); })();
     document.getElementById('bomPS').textContent = vr.psBom || 'Tornillo M2,5×8 avellanado (Pi, desde delante, a ras)';
     document.getElementById('bomRail').parentElement.dataset.parts = vr.rails === 'none' ? (vr.backPlate ? 'backPlate' : '') : 'rails bar';
     document.getElementById('bomSS').textContent = fillD(vr.ssBom || 'Tornillo M2,5×5 (pantalla, desde delante)');
@@ -1856,7 +1859,7 @@ table{border-collapse:collapse;width:100%;margin-top:6px;font-size:12px}td{paddi
     document.querySelectorAll('.clp').forEach((r) => { if (vr.split) r.style.display = 'none'; });
     document.querySelectorAll('.sp').forEach((r) => { r.style.display = vr.split ? '' : 'none'; });
     document.querySelectorAll('.nbp').forEach((r) => { r.style.display = vr.backPlate ? 'none' : ''; });
-    document.querySelectorAll('.bp').forEach((r) => { r.style.display = vr.backPlate && !(vr.split && r.classList.contains('clp')) ? '' : 'none'; });
+    document.querySelectorAll('.bp').forEach((r) => { r.style.display = vr.backPlate && !((vr.split || vr.noClip) && r.classList.contains('clp')) ? '' : 'none'; });
     document.querySelectorAll('.ss').forEach((r) => { r.style.display = vr.straight ? '' : 'none'; });
     document.querySelectorAll('.bb').forEach((r) => { r.style.display = vr.cableBar && !vr.noBar ? '' : 'none'; });
     document.querySelectorAll('.rr').forEach((r) => { r.style.display = vr.rails === 'none' ? 'none' : ''; });

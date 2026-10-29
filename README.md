@@ -147,9 +147,9 @@ El archivo [`CARCASA/carcasa_bienal_v2.html`](CARCASA/carcasa_bienal_v2.html) es
 
 La opción elegida aparece en el visor como la variante **D**. Las medidas son las que da el propio visor (ancho × alto × fondo), sin cables.
 
-### Opción 1 — 128 × 220 × 65 mm
+### Opción 1 — 128 × 220 × 63 mm
 
-Pantalla y mandos en una plancha frontal de metacrilato de 3 mm (128 × 208 mm). Los dos encoders van tumbados. La Raspberry va detrás, entre la plancha frontal y una placa trasera de metacrilato de 5 mm (mismo contorno), separadas por 4 separadores hexagonales M2,5 de 35 mm. La placa trasera lleva 2 cerraduras para colgarla de la pared. Los cables HDMI y micro-USB de la pantalla llevan conectores rectos y rodean el borde superior de la plancha.
+Pantalla y mandos en una plancha frontal de metacrilato de 3 mm (128 × 208 mm). Los dos encoders van tumbados. La Raspberry va detrás, entre la plancha frontal y una placa trasera, también de metacrilato de 3 mm (mismo contorno), separadas por 4 separadores hexagonales M3 de 35 mm. La pantalla va a 10 mm de la plancha, sobre 4 separadores M3, y la Raspberry se fija con separadores macho-hembra, con una tuerca por delante que queda tapada por la pantalla. La lista completa está en [`CARCASA/MATERIALES.md`](CARCASA/MATERIALES.md). La placa trasera lleva 2 cerraduras para colgarla de la pared. Los cables HDMI y micro-USB de la pantalla llevan conectores rectos y rodean el borde superior de la plancha.
 
 Valorar poner pasacables (o bridas) por detrás de la pantalla, para fijar mejor los cables HDMI y USB. 
 

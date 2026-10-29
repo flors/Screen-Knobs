@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="128mm" height="208mm" viewBox="0 0 128 208">
-  <title>Opción 1 - Placa trasera (metacrilato 5 mm)</title>
-  <desc>Mismo contorno que la frontal, 128 x 208 mm, esquinas R8. 4 agujeros D2,8 (en los puntos de la pantalla) y 2 cerraduras para colgar (agujero D9 + ranura D4,5, separación 80 mm). Es simétrica: vale por ambas caras.</desc>
+  <title>Opción 1 - Placa trasera (metacrilato 3 mm)</title>
+  <desc>Mismo contorno que la frontal, 128 x 208 mm, esquinas R8. 4 agujeros D3,2 (M3, en los puntos de la pantalla) y 2 cerraduras para colgar (agujero D9 + ranura D4,5, separación 80 mm). Es simétrica: vale por ambas caras.</desc>
   <!-- Unidades: mm. Línea roja de 0,1 mm = corte. Todo el dibujo es de corte (sin grabado). -->
   <g id="CORTE" fill="none" stroke="#FF0000" stroke-width="0.1">
   <rect x="0" y="0" width="128" height="208" rx="8" ry="8"/>
-  <circle cx="10" cy="14" r="1.4"/>
-  <circle cx="118" cy="14" r="1.4"/>
-  <circle cx="10" cy="171" r="1.4"/>
-  <circle cx="118" cy="171" r="1.4"/>
+  <circle cx="10" cy="14" r="1.6"/>
+  <circle cx="118" cy="14" r="1.6"/>
+  <circle cx="10" cy="171" r="1.6"/>
+  <circle cx="118" cy="171" r="1.6"/>
   <path d="M 26.25 38.1029 L 26.25 32 A 2.25 2.25 0 0 0 21.75 32 L 21.75 38.1029 A 4.5 4.5 0 1 0 26.25 38.1029 Z"/>
   <path d="M 106.25 38.1029 L 106.25 32 A 2.25 2.25 0 0 0 101.75 32 L 101.75 38.1029 A 4.5 4.5 0 1 0 106.25 38.1029 Z"/>
   </g>

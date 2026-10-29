@@ -1,26 +1,19 @@
 # Lista de materiales — Carcasa opción 1
 
-Opción 1 (variante **D** del visor [`carcasa_bienal_v2.html`](carcasa_bienal_v2.html)). Medidas totales del conjunto: **128 × 220 × 65 mm** (ancho × alto × fondo), sin cables. Todas las cotas salen del modelo 3D.
+Opción 1 (variante **D** del visor [`carcasa_bienal_v2.html`](carcasa_bienal_v2.html)). Medidas totales del conjunto: **128 × 220 × 63 mm** (ancho × alto × fondo), sin cables. Todas las cotas salen del modelo 3D.
 
-> ⚠️ **WARNING: PENDIENTE CONFIRMAR MEDIDAS REALES.** Las cotas de la pantalla, la Raspberry y la placa de prototipos son **estimadas**. No cortar las planchas ni comprar la tornillería hasta verificarlas con calibre.
+> ⚠️ **WARNING: PENDIENTE CONFIRMAR MEDIDAS REALES.** Las cotas de la pantalla, la Raspberry y la placa de prototipos son **estimadas**, y falta confirmar el diámetro real de los agujeros de la pantalla (ver las notas del final). No cortar las planchas ni comprar la tornillería hasta verificarlo con calibre.
+>
+> ⚠️ **WARNING: PENDIENTE AÑADIR AGUJEROS PARA BRIDAS** (para sujetar los cables) en las placas **antes del corte láser**. Los archivos de corte actuales no los incluyen.
 
 ## Planchas de metacrilato (corte láser)
 
-Metacrilato transparente. Los archivos de corte están en [`svg/`](svg/).
+Metacrilato transparente. Archivos de corte en [`svg/`](svg/) y en [`dxf/`](dxf/), con el mismo dibujo en mm y a tamaño real.
 
 | Cant. | Pieza | Medidas | Archivo |
 |---|---|---|---|
-| 1 | Placa frontal, **3 mm** | 128 × 208 mm, esquinas R8. 16 agujeros Ø2,8 (M2,5) y 2 ranuras de 7 × 8 mm para los cables de los encoders (quedan ocultas tras la pantalla) | [`opcion1_placa_frontal_3mm.svg`](svg/opcion1_placa_frontal_3mm.svg) |
-| 1 | Placa trasera, **5 mm** | 128 × 208 mm (mismo contorno que la frontal). 4 agujeros Ø2,8 y 2 cerraduras para colgar (agujero Ø9 + ranura Ø4,5, separación 80 mm) | [`opcion1_placa_trasera_5mm.svg`](svg/opcion1_placa_trasera_5mm.svg) |
-
-## Electrónica
-
-| Cant. | Pieza | Notas |
-|---|---|---|
-| 1 | Pantalla HDMI 7" táctil (tipo Waveshare 7" C) | 100 × 165 mm, agujeros de fijación de 108 × 157 mm (M2,5) |
-| 2 | Encoder Pimoroni Picade Max | Placa de 38 × 18 mm, agujeros de 32 × 12 mm (M2,5), conector JST-SH de 4 pines. Se montan en el frente, tumbados y con el conector a la derecha en los dos |
-| 1 | Raspberry Pi 5 con refrigerador activo oficial | Agujeros de fijación de 58 × 49 mm (M2,5) |
-| 1 | Placa de prototipos con header hembra 2×20 | A medida del GPIO (modelada 56 × 7 mm). Lleva 2 bornes de tornillo de 4 vías (paso 5,08 mm), uno por mando. **La Pi con esta placa mide 27 mm de alto**, desde la cara inferior de la Pi hasta lo alto de los bornes |
+| 1 | Placa frontal, **3 mm** | 128 × 208 mm, esquinas R8. 4 agujeros Ø3,2 (M3: pantalla), 12 agujeros Ø2,8 (M2,5: encoders y Raspberry) y 2 ranuras de 7 × 8 mm para los cables de los encoders (quedan ocultas tras la pantalla) | [SVG](svg/opcion1_placa_frontal_3mm.svg) · [DXF](dxf/opcion1_placa_frontal_3mm.dxf) |
+| 1 | Placa trasera, **3 mm** | 128 × 208 mm (mismo contorno que la frontal). 4 agujeros Ø3,2 (M3) y 2 cerraduras para colgar (agujero Ø9 + ranura Ø4,5, separación 80 mm) | [SVG](svg/opcion1_placa_trasera_3mm.svg) · [DXF](dxf/opcion1_placa_trasera_3mm.dxf) |
 
 ## Cables
 
@@ -31,28 +24,42 @@ Metacrilato transparente. Los archivos de corte están en [`svg/`](svg/).
 | 1 | Cable micro-HDMI → HDMI | Hacia una 2ª pantalla (en el modelo solo se reserva el espacio) |
 | 1 | Cable USB-C y fuente oficial de 27 W (5 V / 5 A) | Alimentación de la Raspberry Pi 5 |
 | 2 | Cable JST-SH 4 pines → Dupont | Uno por mando: GND, SW, ENCA, ENCB |
-| ? | Pasacables adhesivo redondo (Ø13? tipo clip de silicona) | Se pega en la cara interior de la placa trasera y sujeta el cable de alimentación. Se pueden añadir más donde haga falta |
 
 Los cables de la pantalla salen por encima del borde superior de la plancha, con una curva amplia.
 
 ## Separadores
 
+Todo en **M3**, salvo los de la Raspberry (M2,5), que deberían venir con su kit. Los encoders también son M2,5.
+
 | Cant. | Pieza | Dónde |
 |---|---|---|
-| 4 | Separador de latón M2,5 hembra-hembra, **7 mm** | Entre la pantalla y la placa frontal |
-| 4 | Separador M2,5 hembra-hembra, **6 mm** | Entre la Raspberry y la placa frontal |
-| 4 | Separador hexagonal M2,5 hembra-hembra, **35 mm** | Entre las dos placas, justo detrás de cada separador de la pantalla. Deja 2,0 mm de margen a los bornes |
+| 4 | Separador de latón **M3** hembra-hembra, **10 mm** | Entre la pantalla y la placa frontal. Los de 7 mm no existen: se venden de 5 en 5 mm (por ejemplo en Diotronic) y se elige 10 mm porque los conectores de la parte trasera de la pantalla no caben en 5 mm |
+| 4 | Separador **M2,5 macho-hembra**, 6 mm (rosca macho de 6 mm) | Raspberry. El lado macho atraviesa la placa frontal y se fija con una tuerca por delante; la Pi se atornilla en el lado hembra. Así los tornillos no chocan dentro del separador. Si los agujeros de la Raspberry son M2,5, deberían venir con el kit de la Raspberry |
+| 4 | Separador hexagonal **M3** hembra-hembra, **35 mm** | Entre las dos placas, justo detrás de cada separador de la pantalla. Deja 2,0 mm de margen a los bornes (la Pi con su placa de prototipos mide 27 mm de alto) |
 
 ## Tornillería
 
+**M3:**
+
 | Cant. | Pieza | Dónde |
 |---|---|---|
-| 4 | Tornillo M2,5 × 16 | Pantalla: atraviesa el separador de 7 mm y la placa frontal, y entra en el separador de 35 mm |
-| 4 | Tornillo M2,5 × 6, avellanado | Raspberry, desde delante y a ras |
-| 4 | Tornillo M2,5 × 4 | Raspberry, por detrás |
-| 8 | Tornillo M2,5 × 8 | Encoders, atornillados por delante |
+| 4 | Tornillo **M3** × 20 | Pantalla: atraviesa el separador de 10 mm y la placa frontal, y entra en el separador de 35 mm |
+| 4 | Tornillo **M3** × 8, avellanado | Placa trasera, por detrás y a ras (ver notas) |
+
+**M2,5:**
+
+| Cant. | Pieza | Dónde |
+|---|---|---|
+| 8 | Tornillo M2,5 × 8 | Encoders, atornillados por delante (los agujeros de la placa de los encoders son M2,5) |
 | 8 | Tuerca M2,5 | Encoders |
-| 4 | Tornillo M2,5 × 8, avellanado | Placa trasera, por detrás y a ras |
+| 4 | Tuerca M2,5 | Raspberry: rosca macho del separador, por delante de la placa frontal (queda tapada por la pantalla). Normalmente incluida en el kit de la Raspberry |
+| 4 | Tornillo M2,5 × 4 | Raspberry: rosca hembra del separador, por la cara de la Pi. Normalmente incluido en el kit de la Raspberry |
+
+### Notas
+
+- **Avellanados:** los tornillos avellanados permiten que la cabeza quede a ras, pero el avellanado (el hueco donde encaja la cabeza) hay que hacerlo a mano en el metacrilato. La alternativa es usar un tornillo normal que sobresalga por fuera del metacrilato.
+- **Métrica:** se sugiere M3 para todo, salvo lo de la Raspberry y los encoders, cuya métrica depende de sus agujeros (M2,5). Esta lista se puede ampliar.
+- **Por confirmar:** los agujeros de la pantalla (tipo Waveshare 7" C) también podrían ser M2,5. Para pasar un tornillo M3 hacen falta agujeros de al menos 3,2 mm en la propia placa de la pantalla. Si no es así, habría que usar M2,5 también en la pantalla.
 
 ## Fijación a la pared
 **DEPENDE DE MONTAJE EN SALA** 
@@ -71,6 +78,6 @@ Orden de los cables de cada knob: GND, SW, ENCA, ENCB, en la fila interior del h
 
 | Knob | Pines físicos | Señales |
 |---|---|---|
-| Knob 1 (Izquierda)| 39 · 37 · 35 · 33 | GND · GPIO26 · GPIO19 · GPIO13 |
-| Knob 2 (Derecha) | 9 · 11 · 13 · 15 | GND · GPIO17 · GPIO27 · GPIO22 |
+| Knob 1 (Izquierda)| 9 · 11 · 13 · 15 | GND · GPIO17 · GPIO27 · GPIO22 |
+| Knob 2 (Derecha) | 39 · 37 · 35 · 33 | GND · GPIO26 · GPIO19 · GPIO13 |
 
