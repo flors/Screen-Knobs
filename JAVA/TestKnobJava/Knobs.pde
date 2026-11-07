@@ -14,19 +14,22 @@ volatile int knobValue2 = 0;
 final long DEBOUNCE_ENCODER_US = 0;
 final long DEBOUNCE_BOTON_US   = 20000;
 
-// NUEVO: cada cuánto mira los pines el hilo de lectura (en nanosegundos). 500000 = 0,5 ms
+// Cada cuánto mira los pines el hilo de lectura (en nanosegundos). 500000 = 0,5 ms
 final long PERIODO_LECTURA_NS = 500000;
 // NUEVO: tiempo mínimo entre dos pulsaciones del botón (milisegundos), para ignorar rebotes
 final long ANTIRREBOTE_BOTON_MS = 30;
 
 Context pi4j;
 Knob knob1, knob2;
-Thread hiloLectura;                 // NUEVO
-volatile boolean leyendo = false;   // NUEVO
+Thread hiloLectura;                
+volatile boolean leyendo = false;   
 
 // Decodificación de cuadratura. Si el sentido sale invertido en un knob,
 // intercambia sus pines A y B en initKnobs().
-final int[] T = {0,1,-1,0,  -1,0,0,1,  1,0,0,-1,  0,-1,1,0};
+final int[] T = {0,1,-1,0,  
+                -1,0,0,1, 
+                1,0,0,-1,  
+                0,-1,1,0};
 
 void initKnobs() {
   pi4j = Pi4J.newAutoContext();
@@ -34,7 +37,7 @@ void initKnobs() {
   knob1 = new Knob("K1", 27, 22, 17, v -> knobValue1 = v);
   knob2 = new Knob("K2", 19, 13, 26, v -> knobValue2 = v);
 
-  // NUEVO: un único hilo lee los dos knobs, siempre en orden
+  //un único hilo lee los dos knobs, siempre en orden
   leyendo = true;
   hiloLectura = new Thread(() -> {
     while (leyendo) {
@@ -89,14 +92,18 @@ class Knob {
          | (inB.state() == DigitalState.HIGH ? 1 : 0);
   }
 
-  // NUEVO: se llama una vez cada ~0,5 ms desde el hilo de lectura (y solo desde ahí)
+  //se llama una vez cada ~0,5 ms desde el hilo de lectura (y solo desde ahí)
   void leer() {
     // Encoder
     int s = estado();
     if (s != lastState) {
-      pasos += T[(lastState << 2) | s];
+
+      index = (lastState << 2) | s;
+      auxPasos = T[indexT];
+
+      pasos += T[index];
       lastState = s;
-      int nuevo = pasos / 4;            // 4 pasos por "clic"
+      int nuevo = pasos / 4;// 4 pasos por "clic", ajustar los clics a la cantidad de pulsos que genera
       if (nuevo != valor) {
         valor = nuevo;
         salida.accept(valor);
