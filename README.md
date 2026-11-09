@@ -1,7 +1,7 @@
 # Screen-Knobs
 
 Pantalla táctil de 7" con **dos mandos giratorios** (encoder con pulsador) controlados por una **Raspberry Pi 5**.
-Los sketches de **Processing** leen los mandos y los usan para manipular los visuales de la pantalla. Se incluyen dos formas de leer los mandos (Python y Java). El diseño de la carcasa es provisional.
+Los sketches de **Processing** leen los mandos y los usan para manipular los visuales de la pantalla. Los mandos se leen con un script de Python (gpiozero) que lanza el propio sketch. El diseño de la carcasa es provisional.
 
 ---
 
@@ -31,14 +31,10 @@ El cambio se aplica en el siguiente arranque.
 Screen-Knobs/
 ├── CARCASA/
 │   └── carcasa_bienal_v2.html      Visor 3D interactivo de la carcasa (se abre en el navegador)
-├── PYTHON/TestKnobPython/          Lectura de los mandos con Python (gpiozero)
-│   ├── TestKnobPython.pde          Sketch principal (visuales)
-│   ├── Knob.pde                    Lanza knob.py y recibe los valores
-│   └── data/knob.py                Lee los GPIO y escribe "K1 5" / "K2 -3" por la salida estándar
-├── JAVA/TestKnobJava/              Lectura de los mandos con Pi4J (Java)
-│   ├── TestKnobJava.pde            Sketch principal (visuales)
-│   ├── Knobs.pde                   Lectura de los GPIO con Pi4J
-│   └── code/*.jar                  Pi4J 2.8.0 y SLF4J (Processing los carga solo)
+├── PYTHON/TestKnobPython/          Sketch de Processing con dos knobs
+│   ├── TestKnobPython.pde          Sketch principal (esqueleto)
+│   ├── Knob.pde                    Lanza knob.py y convierte sus mensajes en eventos
+│   └── data/knob.py                Lee los GPIO con gpiozero y escribe K1 +1, K1 -1, K1 0...
 └── docs/img/                       Capturas de la carcasa usadas en este README
 ```
 
@@ -85,57 +81,64 @@ Orden de los cables del encoder: **GND, SW, ENCA, ENCB**. Todos los pines de se�
 
 ![Esquema GPIO: conexión de los knobs](docs/img/gpio_knobs.svg)
 
-Los dos programas usan exactamente estos pines (`K1: 27, 22, 17` y `K2: 19, 13, 26`, en el orden ENCA, ENCB, SW). Si un mando gira al revés, intercambia sus pines A y B en el código.
+`knob.py` usa exactamente estos pines (knob 1: 27, 22, 17 y knob 2: 19, 13, 26, en el orden ENCA, ENCB, SW). Si un mando gira al revés, intercambia sus pines A y B en `knob.py`.
 
 ---
 
 ## Software
 
-Pruebas de concepto: cada sketch es un test que dibuja un círculo: el **knob 1** cambia su tamaño y el **knob 2** lo mueve en horizontal; pulsar un mando vuelve su valor a 0.
+Cada knob avisa al sketch de Processing con **eventos**: un paso en sentido horario, un paso en sentido antihorario o una pulsación. El sketch actual (`TestKnobPython.pde`) es un esqueleto que escribe en la consola cada evento que recibe.
 
-Las dos versiones ofrecen lo mismo al sketch de Processing: `initKnobs()`, `closeKnobs()` y las variables `knobValue1` y `knobValue2`.
+### Cómo funciona (`PYTHON/TestKnobPython`)
 
-- El valor de cada giro del knob es un entero (positivo en sentido horario, negativo en sentido antihorario).
-- Pulsar el botón del mando devuelve su valor a **0**.
-
-El sketch de ejemplo suaviza los valores con `lerp()` y muestra FPS, memoria y los valores de los mandos en pantalla.
-
-### Versión Python (`PYTHON/TestKnobPython`)
-
-`Knob.pde` arranca `data/knob.py` como proceso hijo y lee su salida estándar en un hilo. `knob.py` usa **gpiozero** y escribe una línea cada vez que cambia un valor:
+1. **`data/knob.py`** usa **gpiozero**: un `RotaryEncoder` y un `Button` por knob, con callbacks. Escribe una línea por evento en la salida estándar:
 
 ```
-K1 5
-K2 -3
+K1 +1     (knob 1, un paso en sentido horario)
+K1 -1     (knob 1, un paso en sentido antihorario)
+K1 0      (botón del knob 1 pulsado)
 ```
 
-- Si Processing se cierra, `knob.py` se cierra solo.
-- Necesita `python3-gpiozero` (en Raspberry Pi OS con escritorio ya viene instalado). En una instalación mínima: `sudo apt install python3-gpiozero`.
-- El sketch tiene `size(720,480)` activo y `fullScreen(P2D)` comentado, para pruebas en ventana.
+   Lo mismo con `K2`. `RotaryEncoder` se crea con `max_steps=0` (sin límite) y los botones llevan `bounce_time=0.02` como antirrebote.
 
-### Versión Java (`JAVA/TestKnobJava`)
+2. **`Knob.pde`** arranca `knob.py` como proceso hijo con `initKnobs()`. Un thread lee su salida y deja los eventos en una cola. La función `pre()`, que Processing ejecuta automáticamente antes de cada `draw()`, vacía la cola y llama a `knobTurned()` o a `knobPressed()`. Así esas funciones corren en el mismo thread que el dibujo.
 
-`Knobs.pde` lee los pines directamente con **Pi4J 2.8.0** (plugin gpiod, el necesario para la Pi 5). Un único hilo consulta los dos mandos cada 0,5 ms. Los `.jar` están en `code/` y Processing los carga automáticamente. El sketch usa `fullScreen()`.
+3. **El sketch principal** solo tiene que llamar a `initKnobs()` en `setup()` y definir dos funciones. Dentro de ellas se pueden usar las variables `knobNum` (1 o 2) y `valor` (`+1` horario, `-1` antihorario):
 
-### ¿Cuál usar?
+```java
+void setup() {
+  size(400, 300, P2D);
+  initKnobs();
+}
 
-| | Python | Java |
-|---|---|---|
-| Proceso extra | Sí (`python3`) | No, todo dentro de Processing |
-| Archivos externos | Necesita `data/knob.py` | Solo los `.jar` de `code/` |
-| Dependencia en la Pi | `gpiozero` | Ninguna (los `.jar` van incluidos) |
-| Estrategia | Event-driven: callbacks de `gpiozero` (`when_activated`, `when_deactivated`) | Polling: un loop lee el estado de los pines |
-| Threads | Varios, threads internos de la librería | Un único thread (`lectura-knobs`) para los dos knobs |
-| Sincronización | `Lock` global en `knob.py` | No hace falta: todo ocurre en el mismo thread |
-| Riesgo | El orden de los eventos entre knobs no está garantizado | Perder pulsos más cortos que el periodo de lectura (0,5 ms) |
+void draw() {
+}
 
-La versión **Java** no depende de archivos externos, solo de los `.jar` que Processing incluye al exportar. Si se usa la de Python, hay que comprobar que `knob.py` viaja dentro de la exportación.
+void knobTurned() {
+  if (knobNum == 1) {
+    if (valor == +1) println("Knob 1: horario");
+    if (valor == -1) println("Knob 1: antihorario");
+  }
+  // ... igual para knobNum == 2
+}
 
-#### Si los dos knobs se mueven a la vez
+void knobPressed() {
+  if (knobNum == 1) println("Knob 1: pulsado");
+  if (knobNum == 2) println("Knob 2: pulsado");
+}
+```
 
-- **Python:** los callbacks pueden ejecutarse en paralelo, desde threads distintos de la librería. Un `Lock` global serializa la actualización del contador y el `print` de cada línea (`K1 5`, `K2 -3`): cada knob cuenta bien y las líneas no se mezclan, aunque el orden entre knobs no está garantizado. En Processing, un thread lee el stdout de `knob.py` línea a línea y actualiza `knobValue1` y `knobValue2`.
-- **Java:** no usa listeners. Un único thread llama a `knob1.leer(); knob2.leer();` cada 0,5 ms, siempre en ese orden. Si los dos knobs cambian a la vez, cada cambio se detecta en la siguiente vuelta del loop, sin concurrencia entre knobs.
-- En las dos versiones, `knobValue1` y `knobValue2` son `volatile int`: el thread de `draw()` siempre ve el último valor.
+Las dos funciones, `knobTurned()` y `knobPressed()`, tienen que existir en el sketch principal aunque estén vacías.
+
+### Notas
+
+- **Dependencias:** `python3` y `gpiozero`. En Raspberry Pi OS con escritorio ya vienen instalados; en una instalación mínima: `sudo apt install python3-gpiozero`.
+- **Cierre:** si el sketch se cierra, `knob.py` se cierra solo y libera los GPIO.
+- **Pines ocupados:** `knob.py` no puede ejecutarse a la vez que otro programa que use los mismos GPIO. Si ya hay un sketch en marcha, `gpiozero` dará un error de pin ocupado.
+- **Pasos por clic:** `RotaryEncoder` cuenta un paso por ciclo completo de las señales A y B. Conviene comprobar con el encoder real que un clic da un solo evento.
+- **Dos knobs a la vez:** los callbacks de `gpiozero` pueden ejecutarse en threads distintos. Los eventos llegan a Processing en el orden en que se reciben y se entregan de uno en uno.
+- **Exportar el sketch:** la carpeta `data/` se incluye en la exportación, así que `knob.py` viaja con la aplicación. En la Pi tienen que estar instalados `python3` y `gpiozero`.
+- **Renderer:** `size(400, 300, P2D)` evita un error de dibujo que da el renderer por defecto en algunos Windows. Si en la Pi diera problemas, se puede volver a `size(400, 300)`.
 
 ---
 

@@ -10,13 +10,29 @@ https://github.com/falue/elisas_synchronotron/issues/3####1
 
 ## Alternativas para leer GPIO (usando PI como PC Linux + Processing) 
 
+
+
+Python: https://gpiozero.readthedocs.io/en/stable/installing.html  
+
+Libreria GPIOZero (Rotary Encoder)
+https://gpiozero.readthedocs.io/en/stable/api_input.html#rotaryencoder
+
+
+
+
+Ejemplo: https://github.com/flors/Screen-Knobs/tree/main/PYTHON
+
+
+
+//DEPRECATED//
 JAVA: https://www.pi4j.com/ 
 Ejemplo: https://github.com/flors/Screen-Knobs/tree/main/JAVA/TestKnobJava 
 
-Python: https://gpiozero.readthedocs.io/en/stable/installing.html 
-Ejemplo: https://github.com/flors/Screen-Knobs/tree/main/PYTHON
+
+
 
 Recomendaciones, en general, mejor usar python: https://codigoelectronica.com/blog/gpio-raspberry-pi (Buscar: "¿Qué librerías son las recomendadas actualmente?")
+
 <img width="1315" height="500" alt="Screenshot 2026-11-08 at 12 35 30" src="https://github.com/user-attachments/assets/8bfaae3d-60cc-45ad-b0ee-423a06d454c6" />
 
 

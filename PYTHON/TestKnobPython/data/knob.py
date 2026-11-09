@@ -1,79 +1,61 @@
-#!/usr/bin/env python3
-# Lee dos knobs (encoder + botón) y escribe por la salida estándar una línea
-# cada vez que cambia su valor:   K1 5   /   K2 -3
+#Cargamos librería GPIOZero, compatible con Pi5 y se usa RotaryEncoder, de la misma librería para leer de forma mas estable los encoders y con callbacks 
+from gpiozero import RotaryEncoder, Button 
 import os
-import sys
 import time
-from threading import Lock
-from gpiozero import DigitalInputDevice, Button
 
-# Decodificación de cuadratura (igual que en la versión de Pi4J).
-# Si el sentido sale invertido, intercambia pin_a y pin_b del knob afectado.
-T = [0,1,-1,0,  -1,0,0,1,  1,0,0,-1,  0,-1,1,0]
-lock = Lock()
+#Variables knob y pulsadores de cada encoder 
+# max_steps=0 significa sin límite de pasos.
+knob1 = RotaryEncoder(27, 22, max_steps=0)   # ENCA=GPIO27, ENCB=GPIO22
+btn1 = Button(17, pull_up=True, bounce_time=0.02)             # SW=GPIO17
 
-
-def enviar(nombre, valor):
-    try:
-        print(f"{nombre} {valor}", flush=True)
-    except BrokenPipeError:   # Processing se ha cerrado
-        os._exit(0)
+knob2 = RotaryEncoder(19, 13, max_steps=0)   # ENCA=GPIO19, ENCB=GPIO13
+btn2 = Button(26, pull_up=True, bounce_time=0.02)             # SW=GPIO26
 
 
-class Knob:
-    def __init__(self, nombre, pin_a, pin_b, pin_sw):
-        self.nombre = nombre
-        self.pasos = 0
-        self.valor = 0
 
-        self.a = DigitalInputDevice(pin_a, pull_up=True)
-        self.b = DigitalInputDevice(pin_b, pull_up=True)
-        self.sw = Button(pin_sw, pull_up=True, bounce_time=0.02)
+# Se ejecuta cada vez que el knob1 da un paso en sentido horario.
+def turn_cw_1():
+    print("K1 +1", flush=True)
 
-        # Nivel de cada pin (1 = HIGH). Con pull-up, "activo" significa nivel bajo.
-        self.nivel_a = int(not self.a.is_active)
-        self.nivel_b = int(not self.b.is_active)
-        self.ultimo = (self.nivel_a << 1) | self.nivel_b
-
-        self.a.when_activated   = lambda: self.cambio("a", 0)
-        self.a.when_deactivated = lambda: self.cambio("a", 1)
-        self.b.when_activated   = lambda: self.cambio("b", 0)
-        self.b.when_deactivated = lambda: self.cambio("b", 1)
-        self.sw.when_pressed    = self.reset
-
-        enviar(self.nombre, 0)
-
-    def cambio(self, cual, nivel):
-        with lock:
-            if cual == "a":
-                self.nivel_a = nivel
-            else:
-                self.nivel_b = nivel
-            s = (self.nivel_a << 1) | self.nivel_b
-            self.pasos += T[(self.ultimo << 2) | s]
-            self.ultimo = s
-            nuevo = int(self.pasos / 4)   # 4 pasos por "clic"
-            if nuevo != self.valor:
-                self.valor = nuevo
-                enviar(self.nombre, nuevo)
-
-    def reset(self):
-        with lock:
-            self.pasos = 0
-            if self.valor != 0:
-                self.valor = 0
-                enviar(self.nombre, 0)
+# Se ejecuta cada vez que el knob1 da un paso en sentido antihorario.
+def turned_ccw_1():
+    print("K1 -1", flush=True)
 
 
-# Pines BCM: (nombre, ENCA, ENCB, SW)
-knobs = [
-    Knob("K1", pin_a=27, pin_b=22, pin_sw=17),
-    Knob("K2", pin_a=19, pin_b=13, pin_sw=26),
-]
+# Se ejecuta al pulsar el botón knob1
+def button_pressed_1():
+    print("K1 0", flush=True)
 
-# Si Processing desaparece, el script se cierra solo (así no se queda vivo).
-padre = os.getppid()
+
+# Listeners eventos knob 1 
+knob1.when_rotated_clockwise = turn_cw_1
+knob1.when_rotated_counter_clockwise = turned_ccw_1
+btn1.when_pressed = button_pressed_1
+
+
+# Se ejecuta cada vez que el knob2 da un paso en sentido horario.
+def turn_cw_2():
+    print("K2 +1", flush=True)
+
+# Se ejecuta cada vez que el knob2 da un paso en sentido antihorario.
+def turned_ccw_2():
+    print("K2 -1", flush=True)
+
+
+# Se ejecuta al pulsar el botón knob2
+def button_pressed_2():
+    print("K2 0", flush=True)
+
+# Listeners eventos knob 2
+knob2.when_rotated_clockwise = turn_cw_2
+knob2.when_rotated_counter_clockwise = turned_ccw_2
+btn2.when_pressed = button_pressed_2
+
+
+
+# Si Processing se cierra, el script se cierra solo (así no se queda vivo y los gpio no quedab abiertos).
+processingRef = os.getppid()
 while True:
     time.sleep(1)
-    if os.getppid() != padre:
+    if os.getppid() != processingRef:
         os._exit(0)
